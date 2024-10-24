@@ -1,5 +1,5 @@
 
-# Laboratorio: Instalación de Prometheus, Grafana y Aplicación Node.js para Métricas PromQL en un Dashboard
+# Laboratorio: Instalación de Prometheus, Grafana y Aplicación Node.js para monitorización de Métricas con Dashboards PromQL
 
 Este laboratorio proporciona una guía paso a paso para instalar **Prometheus**, **Grafana** y la aplicación **Node.js** utilizando **Helm**. La aplicación Node.js proporcionará datos que se pueden visualizar en el dashboard de Grafana utilizando consultas PromQL.
 
@@ -65,9 +65,9 @@ Instala Grafana en el namespace `grafana` utilizando Helm.
 helm install grafana grafana/grafana --namespace grafana
 ```
 
-### Paso 3: Exponer Grafana (opcional)
+### Paso 3: Exponer Grafana
 
-Para acceder a Grafana desde tu navegador, puedes exponer el servicio utilizando un **LoadBalancer** o un **Port-Forward**. Aquí mostramos cómo hacer port-forwarding:
+Para acceder a Grafana desde tu navegador, puedes exponer el servicio utilizando un **NodePort** , un **Port-Forward** o el comando `minikube service <nombre-svc-grafana> -n grafana`. Aquí mostramos cómo hacer port-forwarding:
 
 ```bash
 kubectl port-forward svc/grafana 3000:80 -n grafana
@@ -83,7 +83,7 @@ kubectl get secret --namespace grafana grafana -o jsonpath="{.data.admin-passwor
 
 ### Paso 1: Desplegar la Aplicación Node.js
 
-Ejecuta el siguiente comando para instalar la aplicación Node.js usando el chart **nodejs-app-aroldev-infra**:
+Ejecuta el siguiente comando para instalar la aplicación Node.js usando el chart **nodejs-app-aroldev-infra** definido en este repositorio:
 
 ```bash
 helm install nodejs-app ./nodejs-app-aroldev-infra --namespace app
