@@ -1,6 +1,7 @@
-# Laboratorio: Instalación de Prometheus y Grafana con Configuración de Métricas PromQL en un Dashboard
 
-Este laboratorio proporciona una guía paso a paso para instalar **Prometheus** y **Grafana** utilizando **Helm**, distribuyendo cada servicio en su propio namespace. También incluye la configuración de un dashboard en Grafana para visualizar métricas utilizando PromQL.
+# Laboratorio: Instalación de Prometheus, Grafana y Aplicación Node.js para Métricas PromQL en un Dashboard
+
+Este laboratorio proporciona una guía paso a paso para instalar **Prometheus**, **Grafana** y la aplicación **Node.js** utilizando **Helm**. La aplicación Node.js proporcionará datos que se pueden visualizar en el dashboard de Grafana utilizando consultas PromQL.
 
 ## Requisitos previos
 
@@ -10,11 +11,12 @@ Este laboratorio proporciona una guía paso a paso para instalar **Prometheus** 
 
 ## 1. Creación de Namespaces
 
-Primero, crearemos los namespaces donde desplegaremos Prometheus y Grafana.
+Primero, crearemos los namespaces donde desplegaremos Prometheus, Grafana y la aplicación Node.js.
 
 ```bash
 kubectl create namespace prometheus
 kubectl create namespace grafana
+kubectl create namespace app
 ```
 
 ## 2. Instalación de Prometheus
@@ -35,8 +37,6 @@ Usa el siguiente comando para instalar Prometheus en el namespace `prometheus`.
 ```bash
 helm install prometheus prometheus-community/prometheus --namespace prometheus
 ```
-
-Esto instalará Prometheus utilizando el chart oficial de Prometheus en el namespace correcto.
 
 ### Paso 3: Verificar el Despliegue
 
@@ -79,7 +79,27 @@ Luego, accede a Grafana en [http://localhost:3000](http://localhost:3000). El no
 kubectl get secret --namespace grafana grafana -o jsonpath="{.data.admin-password}" | base64 --decode
 ```
 
-## 4. Configuración de Dashboard en Grafana
+## 4. Instalación de la Aplicación Node.js
+
+### Paso 1: Desplegar la Aplicación Node.js
+
+Ejecuta el siguiente comando para instalar la aplicación Node.js usando el chart **nodejs-app-aroldev-infra**:
+
+```bash
+helm install nodejs-app ./nodejs-app-aroldev-infra --namespace app
+```
+
+Esto desplegará la aplicación en el namespace `app`, proporcionando métricas que podrás visualizar en Grafana.
+
+### Paso 2: Verificar el Despliegue
+
+Puedes verificar que la aplicación Node.js esté corriendo correctamente con el siguiente comando:
+
+```bash
+kubectl get all -n app
+```
+
+## 5. Configuración de Dashboard en Grafana
 
 ### Paso 1: Conectar Grafana con Prometheus
 
@@ -122,24 +142,26 @@ Una vez que hayas iniciado sesión en Grafana:
 
 Guarda el dashboard y asígnale un nombre significativo para su uso posterior. También puedes exportar el dashboard como JSON para compartirlo o reutilizarlo en otros entornos.
 
-## 5. Verificación
+## 6. Verificación
 
 Una vez que todo esté configurado:
 
 - Asegúrate de que el servicio de Prometheus esté recopilando métricas correctamente.
-- Accede a tu nuevo dashboard en Grafana para visualizar las métricas de PromQL configuradas.
+- Accede a tu nuevo dashboard en Grafana para visualizar las métricas de PromQL configuradas, incluyendo las de la aplicación Node.js.
 
-## 6. Desinstalación
+## 7. Desinstalación
 
-Si deseas desinstalar Prometheus y Grafana, puedes hacerlo con los siguientes comandos:
+Si deseas desinstalar Prometheus, Grafana y la aplicación Node.js, puedes hacerlo con los siguientes comandos:
 
 ```bash
 helm uninstall prometheus --namespace prometheus
 helm uninstall grafana --namespace grafana
+helm uninstall nodejs-app --namespace app
 kubectl delete namespace prometheus
 kubectl delete namespace grafana
+kubectl delete namespace app
 ```
 
 ## Conclusión
 
-Este laboratorio cubre los pasos para la instalación de Prometheus y Grafana utilizando Helm, y la creación de un dashboard básico en Grafana para visualizar métricas utilizando consultas PromQL. ¡Explora más métricas y configura dashboards personalizados según tus necesidades!
+Este laboratorio cubre los pasos para la instalación de **Prometheus**, **Grafana** y una aplicación **Node.js** utilizando Helm. También incluye la creación de un dashboard básico en Grafana para visualizar métricas utilizando consultas PromQL. ¡Explora más métricas y configura dashboards personalizados según tus necesidades!
