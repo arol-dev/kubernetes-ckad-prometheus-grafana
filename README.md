@@ -115,25 +115,97 @@ Una vez que hayas iniciado sesión en Grafana:
 
 1. Ve a **Create** > **Dashboard**.
 2. Haz clic en **Add New Panel**.
-3. En el campo **Query**, introduce las siguientes métricas de **PromQL** como ejemplo:
+3. En el campo **Query**, **Code** option derecha, introduce las siguientes métricas de **PromQL** como ejemplo:
 
-   - **Carga promedio del sistema (load average)**:
+### 1. Métricas del Nodo
 
-     ```promql
-     node_load1
-     ```
+- Porcentage de uso de CPU del nodo
+    
+    ```bash
+    100 - (avg(irate(node_cpu_seconds_total{mode="idle"}[30m])) * 100)
+    ```
+    
+- Uso de memoria del nodo (GigaByte)
+    
+    ```bash
+    sum(container_memory_usage_bytes{job="kubernetes-nodes-cadvisor"}) by (node) / (1024 * 1024 * 1024)
+    ```
+    
+- **Uso del disco del nodo (MegaByte)**
+    
+    ```bash
+    sum(rate(container_fs_usage_bytes{job="kubernetes-nodes-cadvisor"}[5m])) by (node) / (1024 * 1024)
+    ```
 
-   - **Uso de CPU por nodo**:
+### 2. Métricas de Pods
 
-     ```promql
-     sum(rate(node_cpu_seconds_total{mode!="idle"}[5m])) by (instance)
-     ```
+- **Uso de CPU por pod**
+    
+    ```bash
+    topk(10, sum(rate(container_cpu_usage_seconds_total[5m])) by (pod))
+    ```
+    
+- Uso de memoria por pod (MegaByte)
+    
+    ```bash
+    sum(container_memory_usage_bytes{job="kubernetes-nodes-cadvisor"}) by (pod) / (1024 * 1024)
+    ```
 
-   - **Memoria usada**:
+### 3. Métricas de Kubernetes
 
-     ```promql
-     node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes
-     ```
+- **Cantidad de pods en estado de error**
+    
+    ```bash
+    sum(kube_pod_status_phase{phase="Failed"}) by (namespace)
+    ```
+    
+- **Cantidad de pods en ejecución**
+    
+    ```bash
+    sum(kube_pod_status_phase{phase="Running"}) by (namespace)
+    ```
+
+### 4. Métricas del Sistema
+
+- Carga del sistema (Uso promedio de CPU en un minuto)
+    
+    ```bash
+    node_load1
+    ```
+    
+- **Espacio libre en disco**
+    
+    ```bash
+    node_filesystem_avail_bytes{mountpoint="/data"}
+    ```
+
+### 5. Métricas de Servicios (opcional)
+
+- Total de peticiones HTTP
+    
+    ```bash
+    rate(kubelet_http_requests_total[5m])
+    ```
+    
+- Tiempo de respuesta de los servicios (http)
+    
+    ```bash
+    sum(rate(kubelet_http_requests_duration_seconds_bucket[5m])) by (service)
+    ```
+
+### 6. Métricas de Network (opcional)
+
+- Tráfico de red de entrada por pod (KiloByte)
+    
+    ```bash
+    sum(rate(container_network_receive_bytes_total[5m])) by (pod) / 1024
+    ```
+    
+- Tráfico de red de salida por pod (KiloByte)
+    
+    ```bash
+    sum(rate(container_network_transmit_bytes_total[5m])) by (pod) / 1024 
+    ```
 
 4. Personaliza los gráficos y ajusta las opciones de visualización.
 5. Guarda el dashboard.
