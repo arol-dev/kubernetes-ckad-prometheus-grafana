@@ -110,7 +110,7 @@ Una vez que hayas iniciado sesión en Grafana:
 1. Dirígete a **Connectiones** > **Data Sources**.
 2. Haz clic en **Add data source**.
 3. Selecciona **Prometheus**.
-4. En el campo **URL**, ingresa la dirección del servicio Prometheus dentro del cluster: `http://prometheus-server.prometheus.svc.cluster.local:9090`.
+4. En el campo **URL**, ingresa la dirección del servicio Prometheus dentro del cluster: `http://prometheus-server.prometheus.svc.cluster.local:80`.
 5. Guarda la configuración.
 
 ### Paso 2: Crear un Dashboard con Métricas PromQL
