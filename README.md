@@ -235,7 +235,3 @@ kubectl delete namespace prometheus
 kubectl delete namespace grafana
 kubectl delete namespace app
 ```
-
-## Conclusión
-
-Este laboratorio cubre los pasos para la instalación de **Prometheus**, **Grafana** y una aplicación **Node.js** utilizando Helm. También incluye la creación de un dashboard básico en Grafana para visualizar métricas utilizando consultas PromQL. ¡Explora más métricas y configura dashboards personalizados según tus necesidades!
